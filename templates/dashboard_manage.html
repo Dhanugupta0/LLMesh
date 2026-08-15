@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management Console - Model Heart</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0b' rx='4'/%3E%3Ctext x='16' y='22' font-family='JetBrains Mono, monospace' font-size='14' font-weight='500' fill='%2300f5d4' text-anchor='middle'%3EMH%3C/text%3E%3C/svg%3E" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ========================================
+           HAO WORLD UI DESIGN SYSTEM
+           Minimalist Tech / Dark Tech / Cyber Minimal
+           ======================================== */
+
+        :root {
+            /* Background colors */
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #111113;
+            --bg-card: #18181b;
+
+            /* Border colors */
+            --border: #27272a;
+            --border-hover: #3f3f46;
+
+            /* Accent colors */
+            --accent: #00f5d4;
+            --accent-dim: rgba(0, 245, 212, 0.15);
+
+            /* Text colors */
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+
+            /* Decorative elements */
+            --grid-line: rgba(255, 255, 255, 0.02);
+
+            /* Status colors */
+            --status-success: #10b981;
+            --status-warning: #f59e0b;
+            --status-error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            line-height: 1.6;
+            padding: 1rem 1.5rem;
+        }
+
+        /* ========================================
+           Background effect system
+           ======================================== */
+
+        /* Grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Noise texture */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Ambient glow */
+        .ambient-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+            animation: ambientFloat 30s ease-in-out infinite;
+        }
+
+        .ambient-glow-1 {
+            top: -200px;
+            right: -200px;
+        }
+
+        .ambient-glow-2 {
+            bottom: -200px;
+            left: -200px;
+            animation-delay: -15s;
+        }
+
+        @keyframes ambientFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, 30px) scale(1.1); }
+            50% { transform: translate(20px, -40px) scale(0.9); }
+            75% { transform: translate(-30px, 20px) scale(1.05); }
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ========================================
+           Navigation bar
+           ======================================== */
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            position: relative;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 2px solid var(--accent);
+            opacity: 0.3;
+        }
+
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            background: var(--accent);
+        }
+
+        .navbar-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 300;
+            font-size: 1rem;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .navbar-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .navbar-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .nav-btn i {
+            font-size: 0.7rem;
+        }
+
+        /* ========================================
+           Stat cards
+           ======================================== */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1.25rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: var(--accent);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .stat-card:hover::before {
+            width: 3px;
+        }
+
+        .stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-label i {
+            color: var(--accent);
+            font-size: 0.75rem;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.75rem;
+            font-weight: 300;
+            color: var(--text-primary);
+        }
+
+        /* ========================================
+           Section headers
+           ======================================== */
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-top: 2rem;
+        }
+
+        .section-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+        }
+
+        .section-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            flex: 1;
+        }
+
+        .section-line {
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .section-action {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-action:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ========================================
+           Cards
+           ======================================== */
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: var(--accent);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover::before {
+            width: 3px;
+        }
+
+        .card-header {
+            padding: 1rem 1.5rem;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-header i {
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .card-header span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* ========================================
+           Usage distribution
+           ======================================== */
+
+        .distribution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .distribution-item {
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            text-align: center;
+            position: relative;
+        }
+
+        .distribution-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 0.25rem;
+        }
+
+        .distribution-value.green { color: var(--status-success); }
+        .distribution-value.cyan { color: var(--accent); }
+        .distribution-value.purple { color: #a78bfa; }
+
+        .distribution-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: var(--border);
+            margin-top: 0.75rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-fill.green { background: var(--status-success); }
+        .progress-fill.cyan { background: var(--accent); }
+        .progress-fill.purple { background: #a78bfa; }
+
+        /* ========================================
+           LLM server cards
+           ======================================== */
+
+        .llm-servers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1rem;
+        }
+
+        .server-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            position: relative;
+        }
+
+        .server-url {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent);
+            word-break: break-all;
+            margin-bottom: 0.25rem;
+        }
+
+        .server-device {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .server-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .server-stat {
+            text-align: center;
+            padding: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+
+        .server-stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+
+        .server-stat-label {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .server-models {
+            margin-bottom: 0.75rem;
+        }
+
+        .server-models-title {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .model-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.5rem;
+            margin: 0.125rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+
+        .model-tag.active {
+            color: var(--status-success);
+            border-color: var(--status-success);
+        }
+
+        .model-tag.inactive {
+            color: var(--text-muted);
+        }
+
+        .server-actions {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .action-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.375rem 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .action-btn.delete:hover {
+            border-color: var(--status-error);
+            color: var(--status-error);
+        }
+
+        /* ========================================
+           Circuit breaker status
+           ======================================== */
+
+        .circuit-config {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .circuit-config-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 0.75rem 1rem;
+            text-align: center;
+        }
+
+        .circuit-config-label {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.375rem;
+        }
+
+        .circuit-config-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+
+        .circuit-breakers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .circuit-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .circuit-empty i {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.5;
+        }
+
+        .circuit-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 0.875rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .circuit-card.closed {
+            border-left: 3px solid var(--status-success);
+        }
+
+        .circuit-card.open {
+            border-left: 3px solid var(--status-error);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .circuit-card.half-open {
+            border-left: 3px solid var(--status-warning);
+        }
+
+        .circuit-server {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .circuit-state {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.625rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .circuit-state.closed {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--status-success);
+            border: 1px solid var(--status-success);
+        }
+
+        .circuit-state.open {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--status-error);
+            border: 1px solid var(--status-error);
+        }
+
+        .circuit-state.half-open {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--status-warning);
+            border: 1px solid var(--status-warning);
+        }
+
+        .circuit-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.625rem;
+        }
+
+        .circuit-stat {
+            text-align: center;
+            padding: 0.375rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+
+        .circuit-stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        .circuit-stat-label {
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .circuit-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 0.625rem;
+            padding-top: 0.625rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .circuit-reset-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.25rem 0.625rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .circuit-reset-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ========================================
+           API key cards
+           ======================================== */
+
+        .api-keys-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1rem;
+        }
+
+        .api-key-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            position: relative;
+        }
+
+        .api-key-header {
+            margin-bottom: 1rem;
+        }
+
+        .api-key-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent);
+            word-break: break-all;
+            margin-bottom: 0.25rem;
+        }
+
+        .api-key-phone {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        .usage-section {
+            margin-bottom: 1rem;
+        }
+
+        .usage-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.375rem;
+        }
+
+        .usage-value {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .usage-progress {
+            height: 4px;
+            background: var(--border);
+            overflow: hidden;
+        }
+
+        .usage-progress-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .usage-progress-fill.warning { background: var(--status-warning); }
+        .usage-progress-fill.danger { background: var(--status-error); }
+
+        .usage-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .metadata {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .metadata-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.125rem 0;
+        }
+
+        .api-key-actions {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .action-group {
+            display: flex;
+            gap: 0.375rem;
+        }
+
+        /* ========================================
+           Model usage details
+           ======================================== */
+
+        .model-usage-details {
+            margin-top: 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .model-usage-table-wrapper {
+            overflow-x: auto;
+            max-height: 200px;
+        }
+
+        .model-usage-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.65rem;
+        }
+
+        .model-usage-table thead {
+            position: sticky;
+            top: 0;
+            background: var(--bg-card);
+            z-index: 10;
+        }
+
+        .model-usage-table th {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-align: left;
+            padding: 0.5rem 0.625rem;
+            border-bottom: 1px solid var(--border);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .model-usage-table td {
+            padding: 0.375rem 0.625rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .model-usage-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .model-usage-table tr:hover td {
+            background: var(--bg-card);
+        }
+
+        .model-usage-table .model-name {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .model-usage-table .numeric {
+            text-align: right;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .model-usage-table .tokens {
+            color: var(--accent);
+        }
+
+        .model-usage-summary {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0.625rem;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ========================================
+           Modal
+           ======================================== */
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 11, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1.5rem;
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 1rem 1.5rem;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            width: 1.75rem;
+            height: 1.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .modal-close:hover {
+            border-color: var(--status-error);
+            color: var(--status-error);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+            max-height: calc(90vh - 4rem);
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--bg-card);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn {
+            padding: 0.625rem 1.25rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            background: var(--bg-card);
+        }
+
+        .btn i {
+            color: var(--accent);
+            font-size: 0.7rem;
+        }
+
+        .btn-primary {
+            background: var(--bg-card);
+            border-color: var(--accent);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-dim);
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+        }
+
+        .data-table th {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-align: left;
+            padding: 0.625rem 0.5rem;
+            border-bottom: 1px solid var(--border);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .data-table td {
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table input {
+            width: 100%;
+            padding: 0.375rem 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+        }
+
+        .data-table input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .data-table select {
+            width: 100%;
+            padding: 0.375rem 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+        }
+
+        /* ========================================
+           Scrollbar
+           ======================================== */
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        /* ========================================
+           Responsive
+           ======================================== */
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .llm-servers-grid,
+            .api-keys-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                margin: 0.5rem;
+            }
+
+            .modal-body {
+                padding: 1rem;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+
+            .modal-footer .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Ambient glow -->
+    <div class="ambient-glow ambient-glow-1"></div>
+    <div class="ambient-glow ambient-glow-2"></div>
+
+    <div class="content-wrapper">
+        <!-- Navigation bar -->
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <div class="logo-icon"></div>
+                <span class="navbar-title">Management Console</span>
+            </div>
+            <div class="navbar-time">
+                <i class="far fa-clock" style="margin-right: 0.5rem;"></i>
+                {{ current_time }}
+            </div>
+            <div class="navbar-actions">
+                <a href="/" class="nav-btn">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="/logout" class="nav-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Stats overview -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">
+                    <i class="fas fa-key"></i>
+                    <span>Total Keys</span>
+                </div>
+                <div class="stat-value">{{ total_entries }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Total Requests</span>
+                </div>
+                <div class="stat-value">{{ total_reqs }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Total Usage</span>
+                </div>
+                <div class="stat-value">{{ total_usage|int }}</div>
+            </div>
+        </section>
+
+        <!-- Usage distribution -->
+        <section>
+            <div class="section-header">
+                <span class="section-number">01</span>
+                <span class="section-title">USAGE DISTRIBUTION</span>
+                <div class="section-line"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="distribution-grid">
+                        <div class="distribution-item">
+                            <div class="distribution-value green">{{ less_than_100 }}</div>
+                            <div class="distribution-label">Less than 100</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill green" style="width: 0%" data-value="{{ less_than_100 }}" data-total="{{ total_entries }}"></div>
+                            </div>
+                        </div>
+
+                        <div class="distribution-item">
+                            <div class="distribution-value cyan">{{ between_100_and_10000 }}</div>
+                            <div class="distribution-label">100 to 10,000</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill cyan" style="width: 0%" data-value="{{ between_100_and_10000 }}" data-total="{{ total_entries }}"></div>
+                            </div>
+                        </div>
+
+                        <div class="distribution-item">
+                            <div class="distribution-value purple">{{ more_than_10000 }}</div>
+                            <div class="distribution-label">More than 10,000</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 0%" data-value="{{ more_than_10000 }}" data-total="{{ total_entries }}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LLM servers -->
+        <section>
+            <div class="section-header">
+                <span class="section-number">02</span>
+                <span class="section-title">LLM SERVERS</span>
+                <div class="section-line"></div>
+                <button class="section-action" onclick="showAddServerModal()">
+                    <i class="fas fa-plus"></i>
+                    <span>Add Server</span>
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="llm-servers-grid" id="llmServersCards">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Circuit breaker status -->
+        <section>
+            <div class="section-header">
+                <span class="section-number">03</span>
+                <span class="section-title">CIRCUIT BREAKER</span>
+                <div class="section-line"></div>
+                <button class="section-action" onclick="loadCircuitBreakerStats()">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Refresh</span>
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Circuit Breaker Monitor</span>
+                </div>
+                <div class="card-body">
+                    <!-- Circuit breaker configuration -->
+                    <div class="circuit-config" id="circuitConfig">
+                        <div class="circuit-config-item">
+                            <span class="circuit-config-label">Failure Threshold</span>
+                            <span class="circuit-config-value" id="cbFailureThreshold">-</span>
+                        </div>
+                        <div class="circuit-config-item">
+                            <span class="circuit-config-label">Recovery Timeout</span>
+                            <span class="circuit-config-value" id="cbRecoveryTimeout">-</span>
+                        </div>
+                        <div class="circuit-config-item">
+                            <span class="circuit-config-label">Half-Open Calls</span>
+                            <span class="circuit-config-value" id="cbHalfOpenMaxCalls">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Circuit breaker list -->
+                    <div class="circuit-breakers-grid" id="circuitBreakersGrid">
+                        <div class="circuit-empty">
+                            <i class="fas fa-info-circle"></i>
+                            <span>No circuit breaker data yet. Refresh or wait for requests to populate.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- API keys -->
+        <section>
+            <div class="section-header">
+                <span class="section-number">04</span>
+                <span class="section-title">API KEYS</span>
+                <div class="section-line"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="api-keys-grid" id="apiKeysCards">
+                        {% for api_key in api_keys %}
+                        <div class="api-key-card">
+                            <div class="api-key-header">
+                                <div class="api-key-display">{{ api_key.key }}</div>
+                                <div class="api-key-phone">{{ api_key.phone or 'N/A' }}</div>
+                            </div>
+
+                            <div class="usage-section">
+                                <div class="usage-header">
+                                    <span>Usage</span>
+                                    <span class="usage-value">{{ api_key.usage }}/{{ api_key.limit }}</span>
+                                </div>
+                                <div class="usage-progress">
+                                    <div class="usage-progress-fill api-key-usage" data-usage="{{ api_key.usage }}" data-limit="{{ api_key.limit }}"></div>
+                                </div>
+                                <div class="usage-details">
+                                    <span>Requests: {{ api_key.reqs }}</span>
+                                    {% if api_key.model_usage %}
+                                    <button onclick="toggleModelUsage(`{{ api_key.key }}`)" style="background:none; border:none; color:var(--accent); cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:0.6rem;">
+                                        {{ api_key.model_usage|length }} models
+                                    </button>
+                                    {% else %}
+                                    <span>No model data</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="metadata">
+                                <div class="metadata-row">
+                                    <span>Created: {{ api_key.created_at or 'N/A' }}</span>
+                                </div>
+                                <div class="metadata-row">
+                                    <span>Last used: {{ api_key.last_used or 'N/A' }}</span>
+                                </div>
+                            </div>
+
+                            <div class="api-key-actions">
+                                <div class="action-group">
+                                    <button data-key="{{ api_key.key }}" onclick="resetUsage(this.getAttribute('data-key'))" class="action-btn" title="Reset usage">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                    <button data-key="{{ api_key.key }}" data-limit="{{ api_key.limit }}" onclick="showEditLimit(this.getAttribute('data-key'), this.getAttribute('data-limit'))" class="action-btn" title="Edit limit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                                <div class="action-group">
+                                    <button data-key="{{ api_key.key }}" onclick="showChangePasswordModal(this.getAttribute('data-key'))" class="action-btn" title="Change password">
+                                        <i class="fas fa-key"></i>
+                                    </button>
+                                    <button data-key="{{ api_key.key }}" onclick="revokeKey(this.getAttribute('data-key'))" class="action-btn delete" title="Revoke key">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {% if api_key.model_usage %}
+                            <div class="model-usage-container" data-key="{{ api_key.key }}"></div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Add server modal -->
+    <div id="addServerModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add LLM Server</h3>
+                <button onclick="closeAddServerModal()" class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Server URL</label>
+                        <input type="text" id="serverUrl" class="form-input" placeholder="https://api.example.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Device Info</label>
+                        <input type="text" id="serverDevice" class="form-input" placeholder="GPU/CPU info">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">API Key (Optional)</label>
+                    <input type="text" id="serverApiKey" class="form-input" placeholder="Optional API key">
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                        <label class="form-label" style="margin-bottom:0;">Model Configuration</label>
+                        <button onclick="addNewModelRow('addServer')" class="btn">
+                            <i class="fas fa-plus"></i>
+                            <span>Add Model</span>
+                        </button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Frontend Model</th>
+                                <th>Backend Model</th>
+                                <th>Input Weight</th>
+                                <th>Output Weight</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="addServerModelsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeAddServerModal()" class="btn">Cancel</button>
+                <button onclick="addServer()" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    <span>Add Server</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit server modal -->
+    <div id="editServerModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit LLM Server</h3>
+                <button onclick="closeEditServerModal()" class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editServerUrl">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Device Info</label>
+                        <input type="text" id="editServerDevice" class="form-input" placeholder="GPU/CPU info">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">API Key (Optional)</label>
+                        <input type="text" id="editServerApiKey" class="form-input" placeholder="Optional API key">
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                        <label class="form-label" style="margin-bottom:0;">Model Configuration</label>
+                        <button onclick="addNewModelRow()" class="btn">
+                            <i class="fas fa-plus"></i>
+                            <span>Add Model</span>
+                        </button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Frontend Model</th>
+                                <th>Backend Model</th>
+                                <th>Input Weight</th>
+                                <th>Output Weight</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="editServerModelsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeEditServerModal()" class="btn">Cancel</button>
+                <button onclick="updateServer()" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    <span>Save Changes</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit limit modal -->
+    <div id="editLimitModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Token Limit</h3>
+                <button onclick="closeEditModal()" class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="number" id="newLimit" class="form-input" placeholder="Enter new limit" style="margin-bottom: 1rem;">
+                <input type="hidden" id="currentApiKey">
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeEditModal()" class="btn">Cancel</button>
+                <button onclick="updateLimit()" class="btn btn-primary">Save Limit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change password modal -->
+    <div id="changePasswordModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Change User Password</h3>
+                <button onclick="closeChangePasswordModal()" class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <input type="password" id="newPassword" class="form-input" placeholder="Enter a new password (at least 6 characters)">
+                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.375rem;">Password length: 6-72 characters</div>
+                </div>
+                <input type="hidden" id="currentApiKeyForPassword">
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeChangePasswordModal()" class="btn">Cancel</button>
+                <button onclick="changePassword()" class="btn btn-primary">Change Password</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const message = document.createElement('div');
+                message.style.cssText = 'position:fixed; top:1rem; right:1rem; padding:0.75rem 1rem; background:var(--bg-card); border:1px solid var(--accent); color:var(--accent); font-family:JetBrains Mono,monospace; font-size:0.7rem; z-index:2000;';
+                message.textContent = 'Copied to clipboard!';
+                document.body.appendChild(message);
+                setTimeout(() => message.remove(), 2000);
+            }).catch(err => console.error('Failed to copy: ', err));
+        }
+    </script>
+    <script src="/static/js/dashboard.js?v=3"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dataElement = document.createElement('div');
+            dataElement.id = 'apiKeysData';
+            dataElement.style.display = 'none';
+            dataElement.textContent = '{{ api_keys | tojson | safe }}';
+            document.body.appendChild(dataElement);
+
+            initializeUsageProgressBars();
+            initializeDistributionBars();
+        });
+
+        function initializeUsageProgressBars() {
+            const progressBars = document.querySelectorAll('.api-key-usage');
+            progressBars.forEach(bar => {
+                const usage = parseFloat(bar.getAttribute('data-usage')) || 0;
+                const limit = parseFloat(bar.getAttribute('data-limit')) || 1;
+                let percentage = Math.min((usage / limit) * 100, 100);
+                bar.style.width = percentage + '%';
+                if (percentage >= 90) {
+                    bar.classList.add('danger');
+                } else if (percentage >= 70) {
+                    bar.classList.add('warning');
+                }
+            });
+        }
+
+        function initializeDistributionBars() {
+            const distributionBars = document.querySelectorAll('.distribution-item .progress-fill');
+            distributionBars.forEach(bar => {
+                const value = parseInt(bar.getAttribute('data-value')) || 0;
+                const total = parseInt(bar.getAttribute('data-total')) || 1;
+                const percentage = (value / total) * 100;
+                setTimeout(() => {
+                    bar.style.width = percentage + '%';
+                }, 300);
+            });
+        }
+    </script>
+</body>
+</html>
