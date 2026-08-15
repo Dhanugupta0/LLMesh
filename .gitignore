@@ -1,0 +1,51 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# Upload and download directories
+downloads/
+
+# Environment and secrets
+.env
+.env.local
+cookies.txt
+
+# Temporary files
+tmp.py
+*.tmp
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Specific files
+static/contact-qr.jpg
+templates/dashboard_manage_clean.html
+templates/test_media_query.css
+
+# Config files with sensitive data
+api.conf
+wechat
