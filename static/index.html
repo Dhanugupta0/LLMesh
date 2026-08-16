@@ -1,0 +1,1943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Heart - LLM Model Aggregation Platform</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0b' rx='4'/%3E%3Ctext x='16' y='22' font-family='JetBrains Mono, monospace' font-size='14' font-weight='500' fill='%2300f5d4' text-anchor='middle'%3EMH%3C/text%3E%3C/svg%3E" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ========================================
+           HAO WORLD UI DESIGN SYSTEM
+           Minimalist Tech / Dark Tech / Cyber Minimal
+           ======================================== */
+
+        :root {
+            /* Background colors */
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #111113;
+            --bg-card: #18181b;
+
+            /* Border colors */
+            --border: #27272a;
+            --border-hover: #3f3f46;
+
+            /* Accent colors */
+            --accent: #00f5d4;
+            --accent-dim: rgba(0, 245, 212, 0.15);
+
+            /* Text colors */
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+
+            /* Decorative elements */
+            --grid-line: rgba(255, 255, 255, 0.02);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ========================================
+           Background effect system
+           ======================================== */
+
+        /* Grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Noise texture */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Ambient glow */
+        .ambient-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+            animation: ambientFloat 30s ease-in-out infinite;
+        }
+
+        .ambient-glow-1 {
+            top: -200px;
+            right: -200px;
+        }
+
+        .ambient-glow-2 {
+            bottom: -200px;
+            left: -200px;
+            animation-delay: -15s;
+        }
+
+        @keyframes ambientFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, 30px) scale(1.1); }
+            50% { transform: translate(20px, -40px) scale(0.9); }
+            75% { transform: translate(-30px, 20px) scale(1.05); }
+        }
+
+        /* ========================================
+           Container
+           ======================================== */
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ========================================
+           Header area
+           ======================================== */
+
+        .header {
+            text-align: center;
+            padding: 5rem 0 4rem;
+            animation: fadeSlideUp 0.6s ease-out;
+        }
+
+        /* Logo mark */
+        .logo-icon {
+            display: inline-block;
+            width: 48px;
+            height: 48px;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 2px solid var(--accent);
+            opacity: 0.3;
+        }
+
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            background: var(--accent);
+        }
+
+        /* Main title */
+        .hero-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 300;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            animation: fadeSlideUp 0.6s ease-out 0.1s both;
+            position: relative;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 50%, var(--text-primary) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeSlideUp 0.6s ease-out 0.1s both, titleShimmer 6s ease-in-out infinite;
+        }
+
+        @keyframes titleShimmer {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 200% center; }
+        }
+
+        /* Subtitle */
+        .hero-subtitle {
+            font-family: 'Noto Sans SC', sans-serif;
+            font-weight: 300;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            animation: fadeSlideUp 0.6s ease-out 0.2s both;
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-subtitle::after {
+            content: '';
+            position: absolute;
+            bottom: -0.75rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+
+        /* Badge */
+        .hero-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            animation: fadeSlideUp 0.6s ease-out 0.3s both;
+        }
+
+        /* Status indicator */
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent);
+            margin-top: 1.5rem;
+            animation: fadeSlideUp 0.6s ease-out 0.4s both;
+        }
+
+        /* ========================================
+           Section headers
+           ======================================== */
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-top: 4rem;
+        }
+
+        .section-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+        }
+
+        .section-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            flex: 1;
+        }
+
+        .section-line {
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ========================================
+           Card components
+           ======================================== */
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: var(--accent);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .card:hover::before {
+            width: 3px;
+        }
+
+        /* ========================================
+           Terminal card
+           ======================================== */
+
+        .terminal-card {
+            margin-bottom: 3rem;
+            animation: fadeSlideUp 0.6s ease-out 0.6s both;
+        }
+
+        .terminal-header {
+            background: var(--bg-secondary);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .terminal-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: #ef4444; }
+        .terminal-dot.yellow { background: #f59e0b; }
+        .terminal-dot.green { background: #10b981; }
+
+        .terminal-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            flex: 1;
+            text-align: center;
+        }
+
+        .terminal-body {
+            padding: 2rem;
+        }
+
+        /* Message area */
+        .message {
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            border-radius: 2px;
+            display: none;
+            animation: fadeSlideUp 0.3s ease-out;
+        }
+
+        .message.success {
+            background: rgba(0, 245, 212, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+
+        /* Input group */
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .input-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--bg-card);
+        }
+
+        .input-field::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Button group */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.875rem 1.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            background: var(--bg-card);
+        }
+
+        .btn i {
+            color: var(--accent);
+        }
+
+        /* Auth toggle tabs */
+        .auth-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.875rem 1rem;
+            background: var(--bg-secondary);
+            border: none;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-right: 1px solid var(--border);
+        }
+
+        .auth-tab:last-child {
+            border-right: none;
+        }
+
+        .auth-tab:hover {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+        }
+
+        .auth-tab.active {
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
+
+        /* Auth container - split layout */
+        .auth-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .auth-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Left feature panel */
+        .auth-features {
+            padding: 2.5rem;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 768px) {
+            .auth-features {
+                display: none;
+            }
+        }
+
+        .auth-features-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .auth-features-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1rem;
+            background: var(--accent-dim);
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-features-icon i {
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        .auth-features-header h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-features-header p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .auth-features-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .auth-features-simple {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .feature-simple {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-primary);
+            border-left: 2px solid var(--accent);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-simple i {
+            color: var(--accent);
+            font-size: 0.9rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .config-btn {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            margin-top: auto;
+            background: var(--accent);
+            border: none;
+            color: var(--bg-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .config-btn:hover {
+            background: #00dfc7;
+            transform: translateY(-1px);
+        }
+
+        .config-btn:active {
+            transform: translateY(0);
+        }
+
+        .config-btn i {
+            font-size: 0.9rem;
+        }
+
+        /* Right form panel */
+        .auth-form-panel {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label i {
+            color: var(--accent);
+            margin-right: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--bg-primary);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .auth-submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent);
+            border: none;
+            color: var(--bg-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .auth-submit-btn:hover {
+            background: #00dfc7;
+            transform: translateY(-1px);
+        }
+
+        .auth-submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+
+        .auth-footer span {
+            color: var(--text-muted);
+        }
+
+        .auth-footer a {
+            color: var(--accent);
+            text-decoration: none;
+            margin-left: 0.25rem;
+            font-weight: 500;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Login success state */
+        .user-success-state {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: var(--accent-dim);
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-avatar i {
+            font-size: 2rem;
+            color: var(--accent);
+        }
+
+        .user-success-state h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .user-success-state p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .user-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .user-action-btn {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .user-action-btn:hover {
+            border-color: var(--accent);
+            background: var(--bg-card);
+        }
+
+        .user-action-btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .user-action-btn.primary:hover {
+            background: #00dfc7;
+        }
+
+        .user-action-btn i {
+            color: var(--accent);
+        }
+
+        .user-action-btn.primary i {
+            color: var(--bg-primary);
+        }
+
+        /* Usage result */
+        #usage_result {
+            display: none;
+            margin-top: 1.5rem;
+            border: 1px solid var(--accent);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .terminal-output .line {
+            padding: 0.625rem 0.875rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .terminal-output .line:last-child {
+            border-bottom: none;
+        }
+
+        .terminal-output .line.success {
+            color: var(--accent);
+        }
+
+        /* ========================================
+           Info card grid
+           ======================================== */
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            animation: fadeSlideUp 0.6s ease-out 0.7s both;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: var(--accent);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .info-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .info-card:hover::before {
+            width: 3px;
+        }
+
+        .info-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-label i {
+            color: var(--accent);
+            font-size: 0.8rem;
+        }
+
+        .info-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            word-break: break-all;
+            flex: 1;
+            text-align: right;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.375rem 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .copy-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ========================================
+           Model list
+           ======================================== */
+
+        .model-list-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            animation: fadeSlideUp 0.6s ease-out 0.8s both;
+        }
+
+        .model-list-header {
+            padding: 1rem 1.5rem;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.3s ease;
+        }
+
+        .model-list-header:hover {
+            background: var(--bg-card);
+        }
+
+        .model-list-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+        }
+
+        .model-list-title i {
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .model-count {
+            background: var(--accent-dim);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.25rem 0.625rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 500;
+            border-radius: 2px;
+        }
+
+        .expand-icon {
+            color: var(--text-muted);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.7rem;
+        }
+
+        .model-list-container.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .model-list-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .model-list-container.expanded .model-list-content {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .model-list {
+            padding: 0.5rem;
+        }
+
+        .model-item {
+            padding: 0.75rem 1rem;
+            margin: 0.25rem 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .model-item:hover {
+            border-color: var(--accent);
+            background: var(--bg-card);
+        }
+
+        .model-index {
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            color: var(--bg-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .model-name {
+            flex: 1;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .model-tag {
+            background: var(--accent-dim);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.125rem 0.5rem;
+            font-size: 0.6rem;
+            border-radius: 2px;
+            text-transform: uppercase;
+        }
+
+        .model-loading, .model-empty {
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+        }
+
+        .model-loading::before {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========================================
+           Footer
+           ======================================== */
+
+        .footer {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer a,
+        .footer button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+        }
+
+        .footer a:hover,
+        .footer button:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ========================================
+           Modal
+           ======================================== */
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 11, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1.5rem;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            max-width: 450px;
+            width: 100%;
+            max-height: 90vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: modalSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-secondary);
+        }
+
+        .modal-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            letter-spacing: 0.05em;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.375rem;
+            transition: all 0.3s ease;
+            font-size: 0.75rem;
+        }
+
+        .modal-close:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+            max-height: calc(90vh - 4rem);
+        }
+
+        .qr-code {
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .qr-code img {
+            max-width: 180px;
+            border: 1px solid var(--border);
+            padding: 8px;
+            background: var(--bg-primary);
+        }
+
+        .payment-info {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.8rem;
+        }
+
+        .payment-info p {
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-info ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .payment-info li {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .payment-info li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        /* ========================================
+           Animations
+           ======================================== */
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========================================
+           Scrollbar
+           ======================================== */
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        /* ========================================
+           Responsive
+           ======================================== */
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            .header {
+                padding: 3rem 0 3rem;
+            }
+
+            .section-header {
+                padding-top: 2rem;
+            }
+
+            .info-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .info-value {
+                text-align: left;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Ambient glow -->
+    <div class="ambient-glow ambient-glow-1"></div>
+    <div class="ambient-glow ambient-glow-2"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="hero-title">MODEL HEART</h1>
+            <p class="hero-subtitle">LLM MODEL AGGREGATION PLATFORM</p>
+        </header>
+
+        <!-- 01 User authentication -->
+        <section>
+            <div class="section-header">
+                <span class="section-number">01</span>
+                <span class="section-title">USER AUTHENTICATION</span>
+                <div class="section-line"></div>
+            </div>
+
+            <div class="auth-container">
+                <!-- Left: feature info -->
+                <div class="auth-features">
+                    <div class="auth-features-simple">
+                        <div class="feature-simple">
+                            <i class="fas fa-desktop"></i>
+                            <span>Supports Chatbox / Cherry Studio / Dify and more</span>
+                        </div>
+                        <div class="feature-simple">
+                            <i class="fas fa-cube"></i>
+                            <span>Supports Claude / GPT / Gemini / Deepseek and more</span>
+                        </div>
+                        <div class="feature-simple">
+                            <i class="fas fa-code"></i>
+                            <span>Supports Claude Code / OpenCode / Kimi Code and more</span>
+                        </div>
+                        <div class="feature-simple">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>OpenAI / Anthropic Compatible API</span>
+                        </div>
+                        <div class="feature-simple">
+                            <i class="fas fa-vector-square"></i>
+                            <span>Supports Embedding Models</span>
+                        </div>
+                    </div>
+                    <!-- Config guide button -->
+                    <button onclick="showConfigModal()" class="config-btn">
+                        <i class="fas fa-cog"></i>
+                        <span>Config Guide</span>
+                    </button>
+                </div>
+
+                <!-- Right: login/register form -->
+                <div class="auth-form-panel">
+                    <div id="message_area" class="message"></div>
+
+                    <!-- Login/register form -->
+                    <div id="auth_form">
+                        <!-- Mode toggle -->
+                        <div class="auth-tabs">
+                            <button class="auth-tab active" onclick="switchAuthMode('login')" id="login_tab">Login</button>
+                            <button class="auth-tab" onclick="switchAuthMode('register')" id="register_tab">Register</button>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-mobile-alt"></i> Phone Number</label>
+                            <input type="tel" id="phone_input" class="form-input" placeholder="Enter your phone number">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-lock"></i> Password</label>
+                            <input type="password" id="password_input" class="form-input" placeholder="Enter your password">
+                        </div>
+
+                        <!-- Confirm password - shown only during registration -->
+                        <div class="form-group" id="confirm_password_group" style="display: none;">
+                            <label class="form-label"><i class="fas fa-check-double"></i> Confirm Password</label>
+                            <input type="password" id="confirm_password_input" class="form-input" placeholder="Re-enter your password">
+                        </div>
+
+                        <button onclick="handleAuth()" class="auth-submit-btn" id="auth_submit_btn">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Login</span>
+                        </button>
+
+                        <div class="auth-footer">
+                            <span id="auth_switch_text">Don't have an account?</span>
+                            <a href="javascript:void(0)" onclick="switchAuthMode(authMode === 'login' ? 'register' : 'login')" id="auth_switch_link">Register now</a>
+                        </div>
+                    </div>
+
+                    <!-- User info after successful login -->
+                    <div id="user_info" style="display: none;">
+                        <div class="user-success-state">
+                            <div class="user-avatar">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <h4>Login Successful</h4>
+                            <p id="user_welcome_text">Welcome back</p>
+                        </div>
+                        <div class="user-actions">
+                            <button onclick="goToUserPage()" class="user-action-btn primary">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Go to Console</span>
+                            </button>
+                            <button onclick="userLogout()" class="user-action-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 02 Supported models -->
+        <section>
+            <div class="section-header">
+                <span class="section-number">02</span>
+                <span class="section-title">SUPPORTED MODELS</span>
+                <div class="section-line"></div>
+            </div>
+
+            <div class="model-list-container">
+                <div class="model-list-header" onclick="toggleModelList()">
+                    <div class="model-list-title">
+                        <i class="fas fa-cube"></i>
+                        <span>Supported Models</span>
+                        <span class="model-count">0 models</span>
+                    </div>
+                    <div class="expand-icon">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="model-list-content">
+                    <div class="model-list" id="model_list"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <a href="https://github.com/firslov/MyAPI" target="_blank" title="Source code">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="/dashboard" title="Admin panel">
+                <i class="fas fa-chart-bar"></i>
+            </a>
+            <button onclick="showContactModal()" title="Contact support">
+                <i class="fas fa-headset"></i>
+            </button>
+        </footer>
+    </div>
+
+    <!-- Contact support modal -->
+    <div id="contactModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Contact Admin</h3>
+                <button onclick="hideContactModal()" class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="qr-code">
+                    <img src="/static/contact-qr.jpg" alt="Contact support QR code">
+                    <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.75rem;">Scan the QR code to get support</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Config guide modal -->
+    <div id="configModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Client Configuration Guide</h3>
+                <button onclick="hideConfigModal()" class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- OpenAI-compatible client general config -->
+                <div class="payment-info" style="margin-bottom: 1.5rem;">
+                    <p style="margin-bottom: 0.75rem; font-weight: 500;">
+                        <i class="fas fa-plug" style="margin-right: 0.5rem;"></i>OpenAI-Compatible Client General Configuration
+                    </p>
+                    <p style="color: var(--text-muted); font-size: 0.7rem; margin-bottom: 0.5rem;">
+                        For clients like Chatbox / Cherry Studio / Dify
+                    </p>
+                    <pre id="openai-config" style="background: var(--bg-primary); padding: 1rem; border: 1px solid var(--border); overflow-x: auto; font-size: 0.7rem; line-height: 1.5; color: var(--text-secondary); margin: 0;">base_url: {{API_BASE_URL}}
+api_key: your key</pre>
+                    <button onclick="copyConfig('openai')" class="copy-btn" style="margin-top: 0.75rem;">
+                        <i class="fas fa-copy"></i> Copy Config
+                    </button>
+                </div>
+
+                <!-- Claude Code config -->
+                <div class="payment-info" style="margin-bottom: 1.5rem;">
+                    <p style="margin-bottom: 0.75rem; font-weight: 500;">
+                        <i class="fas fa-terminal" style="margin-right: 0.5rem;"></i>Claude Code Configuration
+                    </p>
+                    <p style="color: var(--text-muted); font-size: 0.7rem; margin-bottom: 0.5rem;">
+                        File path: ~/.claude/settings.json
+                    </p>
+                    <pre id="claude-config" style="background: var(--bg-primary); padding: 1rem; border: 1px solid var(--border); overflow-x: auto; font-size: 0.7rem; line-height: 1.5; color: var(--text-secondary); margin: 0;">{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "your key",
+    "ANTHROPIC_BASE_URL": "{{API_BASE_URL}}/anthropic",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "kimi-claude",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "kimi-claude",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "kimi-claude"
+  },
+  "model": "kimi-claude",
+  "outputStyle": "Default"
+}</pre>
+                    <button onclick="copyConfig('claude')" class="copy-btn" style="margin-top: 0.75rem;">
+                        <i class="fas fa-copy"></i> Copy Config
+                    </button>
+                </div>
+
+                <!-- OpenCode config -->
+                <div class="payment-info">
+                    <p style="margin-bottom: 0.75rem; font-weight: 500;">
+                        <i class="fas fa-code" style="margin-right: 0.5rem;"></i>OpenCode Configuration
+                    </p>
+                    <p style="color: var(--text-muted); font-size: 0.7rem; margin-bottom: 0.5rem;">
+                        File path: ~/.config/opencode/opencode.json
+                    </p>
+                    <pre id="opencode-config" style="background: var(--bg-primary); padding: 1rem; border: 1px solid var(--border); overflow-x: auto; font-size: 0.7rem; line-height: 1.5; color: var(--text-secondary); margin: 0;">{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "HaoAI": {
+      "models": {
+        "haoai/kimi": {
+          "name": "haoai/kimi"
+        }
+      },
+      "npm": "@ai-sdk/anthropic",
+      "options": {
+        "apiKey": "your key",
+        "baseURL": "{{API_BASE_URL}}/anthropic/v1"
+      }
+    },
+    "HaoAICoding": {
+      "models": {
+        "haoai/glm5": {
+          "name": "haoai/glm5"
+        },
+        "haoai/glm4.7": {
+          "name": "haoai/glm4.7"
+        }
+      },
+      "name": "HaoAI Coding",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "apiKey": "your key",
+        "baseURL": "{{API_BASE_URL}}/coding"
+      }
+    }
+  }
+}</pre>
+                    <button onclick="copyConfig('opencode')" class="copy-btn" style="margin-top: 0.75rem;">
+                        <i class="fas fa-copy"></i> Copy Config
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global configuration
+        let appConfig = {
+            api_base_url: 'http://localhost:8087',
+            domain: 'localhost'
+        };
+
+        // Load configuration
+        async function loadConfig() {
+            try {
+                const response = await fetch('/get-config');
+                if (response.ok) {
+                    appConfig = await response.json();
+                    updateConfigUI();
+                }
+            } catch (error) {
+                console.error('Failed to load config:', error);
+            }
+        }
+
+        // Update configuration-related UI
+        function updateConfigUI() {
+            const baseUrl = appConfig.api_base_url || 'http://localhost:8087';
+            
+            // OpenAI config
+            const openaiConfig = document.getElementById('openai-config');
+            if (openaiConfig) {
+                openaiConfig.textContent = openaiConfig.textContent.replace('{{API_BASE_URL}}', baseUrl);
+            }
+            
+            // Claude Code Configuration
+            const claudeConfig = document.getElementById('claude-config');
+            if (claudeConfig) {
+                claudeConfig.textContent = claudeConfig.textContent.replace('{{API_BASE_URL}}', baseUrl);
+            }
+            
+            // OpenCode Configuration
+            const opencodeConfig = document.getElementById('opencode-config');
+            if (opencodeConfig) {
+                opencodeConfig.textContent = opencodeConfig.textContent.replace(/\{\{API_BASE_URL\}\}/g, baseUrl);
+            }
+        }
+
+        // Current auth mode
+        let authMode = 'login';
+
+        // Switch between login and register modes
+        function switchAuthMode(mode) {
+            authMode = mode;
+            const loginTab = document.getElementById('login_tab');
+            const registerTab = document.getElementById('register_tab');
+            const confirmPasswordGroup = document.getElementById('confirm_password_group');
+            const submitBtn = document.getElementById('auth_submit_btn');
+            const switchText = document.getElementById('auth_switch_text');
+            const switchLink = document.getElementById('auth_switch_link');
+
+            if (mode === 'login') {
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+                confirmPasswordGroup.style.display = 'none';
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i><span>Login</span>';
+                switchText.textContent = "Don't have an account?";
+                switchLink.textContent = 'Register now';
+            } else {
+                loginTab.classList.remove('active');
+                registerTab.classList.add('active');
+                confirmPasswordGroup.style.display = 'block';
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i><span>Register</span>';
+                switchText.textContent = "Already have an account?";
+                switchLink.textContent = 'Login now';
+            }
+        }
+
+        // Handle login/register
+        async function handleAuth() {
+            const phone = document.getElementById('phone_input').value;
+            const password = document.getElementById('password_input').value;
+
+            if (!phone || !password) {
+                showMessage('Please enter your phone number and password', true);
+                return;
+            }
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                showMessage('Please enter a valid phone number', true);
+                return;
+            }
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters', true);
+                return;
+            }
+
+            if (authMode === 'register') {
+                const confirmPassword = document.getElementById('confirm_password_input').value;
+                if (password !== confirmPassword) {
+                    showMessage('The two passwords do not match', true);
+                    return;
+                }
+                await register(phone, password);
+            } else {
+                await login(phone, password);
+            }
+        }
+
+        // User registration
+        async function register(phone, password) {
+            try {
+                const response = await fetch('/user/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, password }),
+                    credentials: 'include',
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || `Registration failed: ${response.status}`);
+                }
+
+                // Registration successful, redirect to user page
+                showMessage('Registration successful! Redirecting...');
+                setTimeout(() => {
+                    window.location.replace('/user');
+                }, 500);
+            } catch (error) {
+                console.error('Registration failed:', error);
+                showMessage('Registration failed: ' + error.message, true);
+            }
+        }
+
+        // User login
+        async function login(phone, password) {
+            try {
+                const response = await fetch('/user/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, password }),
+                    credentials: 'include',
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || `Login failed: ${response.status}`);
+                }
+
+                // Login successful, redirect to user page
+                showMessage('Login successful! Redirecting...');
+                setTimeout(() => {
+                    window.location.replace('/user');
+                }, 500);
+            } catch (error) {
+                console.error('Login failed:', error);
+                showMessage('Login failed: ' + error.message, true);
+            }
+        }
+
+        // Show user info (after successful login)
+        function showUserInfo(phone) {
+            document.getElementById('auth_form').style.display = 'none';
+            document.getElementById('user_info').style.display = 'block';
+            document.getElementById('user_welcome_text').textContent = `Welcome, ${phone}`;
+        }
+
+        // Go to user page
+        function goToUserPage() {
+            window.location.replace('/user');
+        }
+
+        // User logout
+        async function userLogout() {
+            try {
+                window.location.href = '/user/logout';
+            } catch (error) {
+                console.error('Logout failed:', error);
+                showMessage('Logout failed, please try again', true);
+            }
+        }
+
+        // Check login status
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('/user/info', {
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    showUserInfo(data.phone);
+                }
+            } catch (error) {
+                // Not logged in, ignore
+            }
+        }
+
+        function copyToClipboardText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showMessage('Copied to clipboard!');
+            });
+        }
+
+        function showMessage(message, isError) {
+            const messageArea = document.getElementById('message_area');
+            const prefix = isError ? '[ERROR]' : '[SUCCESS]';
+            messageArea.textContent = `${prefix} ${message}`;
+
+            messageArea.className = isError ? 'message error' : 'message success';
+            messageArea.style.display = 'block';
+
+            setTimeout(() => {
+                messageArea.style.display = 'none';
+            }, 5000);
+        }
+
+        async function loadModels() {
+            try {
+                const modelListContainer = document.querySelector('.model-list-container');
+                const modelList = document.getElementById('model_list');
+                const modelCount = document.querySelector('.model-count');
+
+                modelList.innerHTML = '<div class="model-loading">Loading model list...</div>';
+                modelListContainer.classList.add('expanded');
+                modelCount.textContent = 'Loading...';
+
+                const response = await fetch('/get-models');
+                const data = await response.json();
+
+                modelList.innerHTML = '';
+
+                if (data.models && data.models.length > 0) {
+                    data.models.forEach((model, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'model-item';
+
+                        let tag = 'chat';
+                        if (model.startsWith('haoai/')) tag = 'coding';
+                        else if (model.toLowerCase().includes('embedding')) tag = 'embedding';
+
+                        div.innerHTML = `
+                            <div class="model-index">${index + 1}</div>
+                            <div class="model-name" title="${model}">${model}</div>
+                            <div class="model-tag">${tag}</div>
+                        `;
+
+                        div.addEventListener('click', () => {
+                            copyToClipboardText(model);
+                        });
+
+                        modelList.appendChild(div);
+                    });
+
+                    modelCount.textContent = `${data.models.length} models`;
+                } else {
+                    modelList.innerHTML = '<div class="model-empty">No models available</div>';
+                    modelCount.textContent = '0 models';
+                }
+            } catch (error) {
+                console.error('Loading models failed:', error);
+                const modelList = document.getElementById('model_list');
+                const modelCount = document.querySelector('.model-count');
+                modelList.innerHTML = '<div class="model-empty">Failed to load, please try again later</div>';
+                modelCount.textContent = 'Failed to load';
+            }
+        }
+
+        function toggleModelList() {
+            const container = document.querySelector('.model-list-container');
+            container.classList.toggle('expanded');
+        }
+
+        function showContactModal() {
+            document.getElementById('contactModal').classList.remove('hidden');
+        }
+
+        function hideContactModal() {
+            document.getElementById('contactModal').classList.add('hidden');
+        }
+
+        function showConfigModal() {
+            document.getElementById('configModal').classList.remove('hidden');
+        }
+
+        function hideConfigModal() {
+            document.getElementById('configModal').classList.add('hidden');
+        }
+
+        function copyConfig(type) {
+            let config = '';
+            const baseUrl = appConfig.api_base_url || 'http://localhost:8087';
+            
+            if (type === 'openai') {
+                config = `base_url: ${baseUrl}
+api_key: your key`;
+            } else if (type === 'claude') {
+                config = `{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "your key",
+    "ANTHROPIC_BASE_URL": "${baseUrl}/anthropic",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "kimi-claude",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "kimi-claude",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "kimi-claude"
+  },
+  "model": "kimi-claude",
+  "outputStyle": "Default"
+}`;
+            } else if (type === 'opencode') {
+                config = `{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "HaoAI": {
+      "models": {
+        "haoai/kimi": {
+          "name": "haoai/kimi"
+        }
+      },
+      "npm": "@ai-sdk/anthropic",
+      "options": {
+        "apiKey": "your key",
+        "baseURL": "${baseUrl}/anthropic/v1"
+      }
+    },
+    "HaoAICoding": {
+      "models": {
+        "haoai/glm5": {
+          "name": "haoai/glm5"
+        },
+        "haoai/glm4.7": {
+          "name": "haoai/glm4.7"
+        }
+      },
+      "name": "HaoAI Coding",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "apiKey": "your key",
+        "baseURL": "${baseUrl}/coding"
+      }
+    }
+  }
+}`;
+            }
+            
+            navigator.clipboard.writeText(config).then(() => {
+                showMessage('Configuration copied to clipboard!');
+            });
+        }
+
+        document.addEventListener('click', function (event) {
+            const contactModal = document.getElementById('contactModal');
+            const configModal = document.getElementById('configModal');
+
+            if (event.target === contactModal) {
+                hideContactModal();
+            }
+            if (event.target === configModal) {
+                hideConfigModal();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadConfig();
+            loadModels();
+            checkLoginStatus();
+        });
+    </script>
+</body>
+</html>
