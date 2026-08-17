@@ -482,8 +482,8 @@ async def user_register(
         if not phone or not password:
             raise HTTPException(status_code=400, detail="Phone number and password are required")
 
-        if not re.match(r"^1[3-9]\d{9}$", phone):
-            raise HTTPException(status_code=400, detail="Please enter a valid phone number")
+        if not re.match(r"^\+?\d{7,15}$", phone):
+            raise HTTPException(status_code=400, detail="Please enter a valid phone number (e.g., +1234567890)")
 
         if len(password) < 6:
             raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
@@ -543,8 +543,8 @@ async def user_login(
         if not phone or not password:
             raise HTTPException(status_code=400, detail="Phone number and password are required")
 
-        if not re.match(r"^1[3-9]\d{9}$", phone):
-            raise HTTPException(status_code=400, detail="Please enter a valid phone number")
+        if not re.match(r"^\+?\d{7,15}$", phone):
+            raise HTTPException(status_code=400, detail="Please enter a valid phone number (e.g., +1234567890)")
 
         # Check whether the user exists
         api_key_record = await api_key_repo.get_by_phone(phone)
@@ -677,8 +677,8 @@ async def generate_api_key(
         if not phone or not password:
             raise HTTPException(status_code=400, detail="Phone number and password are required")
 
-        if not re.match(r"^1[3-9]\d{9}$", phone):
-            raise HTTPException(status_code=400, detail="Please enter a valid phone number")
+        if not re.match(r"^\+?\d{7,15}$", phone):
+            raise HTTPException(status_code=400, detail="Please enter a valid phone number (e.g., +1234567890)")
 
         if len(password) < 6:
             raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
@@ -733,8 +733,8 @@ async def check_usage(
         if not phone or not password:
             raise HTTPException(status_code=400, detail="Phone number and password are required")
 
-        if not re.match(r"^1[3-9]\d{9}$", phone):
-            raise HTTPException(status_code=400, detail="Please enter a valid phone number")
+        if not re.match(r"^\+?\d{7,15}$", phone):
+            raise HTTPException(status_code=400, detail="Please enter a valid phone number (e.g., +1234567890)")
 
         # Check whether the phone number already exists
         existing_key = await api_key_repo.get_by_phone(phone)

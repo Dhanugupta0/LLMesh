@@ -3,7 +3,7 @@ version: '3.8'
 services:
   app:
     build: .
-    container_name: model-heart-api
+    container_name: llmesh-api
     restart: unless-stopped
     ports:
       - "8087:8087"
@@ -16,6 +16,8 @@ services:
       - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
       - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}
       - DEFAULT_LIMIT=${DEFAULT_LIMIT:-1000000}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_BASE_URL=${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}
       - PORT=8087
       - HOST=0.0.0.0
     volumes:
@@ -29,12 +31,12 @@ services:
       retries: 3
       start_period: 40s
     networks:
-      - model-heart-network
+      - llmesh-network
 
   # Optional: use Nginx as a reverse proxy
   nginx:
     image: nginx:alpine
-    container_name: model-heart-nginx
+    container_name: llmesh-nginx
     restart: unless-stopped
     ports:
       - "80:80"
@@ -45,10 +47,10 @@ services:
     depends_on:
       - app
     networks:
-      - model-heart-network
+      - llmesh-network
     profiles:
       - with-nginx
 
 networks:
-  model-heart-network:
+  llmesh-network:
     driver: bridge

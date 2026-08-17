@@ -58,6 +58,10 @@ class Settings(BaseSettings):
     # Generate with: python -c "import bcrypt; print(bcrypt.hashpw(b'your_password', bcrypt.gensalt()).decode())"
     ADMIN_PASSWORD_HASH: str = os.getenv("ADMIN_PASSWORD_HASH", "")
 
+    # OpenRouter configuration (upstream LLM provider)
+    OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
+    OPENROUTER_BASE_URL: str = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+
     @property
     def HTTP_CLIENT_CONFIG(self) -> Dict[str, Any]:
         """HTTP client configuration"""
