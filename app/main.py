@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 from app.core.application import create_application
 from app.api.routes import router
+from app.api.cli_routes import cli_router
 from app.config.settings import settings
 
 # Create the FastAPI application
@@ -19,6 +20,7 @@ app.add_middleware(
 
 # Register routes
 app.include_router(router)
+app.include_router(cli_router)
 
 if __name__ == "__main__":
     uvicorn.run(

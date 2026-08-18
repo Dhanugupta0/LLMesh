@@ -102,6 +102,18 @@ class ServerModel(Base):
     input_token_weight = Column(Float, default=1.0)  # Input token weight
     output_token_weight = Column(Float, default=1.0)  # Output token weight
 
+    # Extended metadata for CLI model discovery (Phase 3)
+    capabilities = Column(Text, nullable=True)  # JSON: e.g. ["coding", "reasoning"]
+    modes = Column(Text, nullable=True)  # JSON: e.g. ["coding", "thinking"]
+    context_window = Column(Integer, nullable=True)  # e.g. 128000
+    tool_support = Column(Boolean, nullable=True, default=False)
+    vision_support = Column(Boolean, nullable=True, default=False)
+    reasoning_support = Column(Boolean, nullable=True, default=False)
+    streaming_support = Column(Boolean, nullable=True, default=True)
+    priority = Column(Integer, nullable=True, default=0)
+    weight = Column(Float, nullable=True, default=1.0)
+    provider_name = Column(String(100), nullable=True)  # e.g. "Groq", "NVIDIA NIM"
+
     # Relationships
     server = relationship("LLMServer", back_populates="models")
 

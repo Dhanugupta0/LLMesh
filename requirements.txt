@@ -27,3 +27,8 @@ itsdangerous==2.1.2
 
 # Token Counting
 tiktoken==0.8.0
+
+# CLI
+rich>=13.0.0
+prompt_toolkit>=3.0.0
+click>=8.0.0
