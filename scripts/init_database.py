@@ -40,11 +40,11 @@ async def seed_openrouter_server():
     # Default model aliases: frontend_name -> backend_name (OpenRouter model ID)
     default_models = [
         ("free", "openrouter/free"),
-        ("smart", "openai/gpt-oss-120b:free"),
-        ("coding", "qwen/qwen3-coder-480b-a35b:free"),
-        ("fast", "google/gemma-4-26b-a4b:free"),
-        ("reasoning", "nvidia/nemotron-3-ultra:free"),
-        ("vision", "nvidia/nemotron-nano-2-vl:free"),
+        ("smart", "nvidia/nemotron-3-super-120b-a12b:free"),
+        ("coding", "cohere/north-mini-code:free"),
+        ("fast", "google/gemma-4-26b-a4b-it:free"),
+        ("reasoning", "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"),
+        ("vision", "nvidia/nemotron-nano-12b-v2-vl:free"),
         ("small", "openai/gpt-oss-20b:free"),
     ]
 

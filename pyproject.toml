@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ovo"
+version = "0.1.0"
+description = "OVO — Terminal AI engineering agent powered by LLMesh"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = [
+    "textual>=0.80.0",
+    "rich>=13.0.0",
+    "click>=8.0.0",
+    "httpx>=0.25.0",
+    "pydantic>=2.0.0",
+    "tiktoken>=0.7.0",
+]
+
+[project.scripts]
+ovo = "ovo.app:main"
+
+[tool.setuptools.packages.find]
+include = ["ovo*"]

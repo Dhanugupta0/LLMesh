@@ -62,6 +62,12 @@ class Settings(BaseSettings):
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
     OPENROUTER_BASE_URL: str = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
 
+    # Groq configuration (upstream LLM provider)
+    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+
+    # NVIDIA NIM configuration (upstream LLM provider)
+    NVIDIA_NIM_API_KEY: str = os.getenv("NVIDIA_NIM_API_KEY", "")
+
     @property
     def HTTP_CLIENT_CONFIG(self) -> Dict[str, Any]:
         """HTTP client configuration"""

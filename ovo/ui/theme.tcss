@@ -1,0 +1,373 @@
+/* OVO — Textual CSS Theme
+ * #0a0a0b bg, #00f5d4 accent, bubble-style chat
+ */
+
+/* ── Global ─────────────────────────────────────────── */
+
+Screen {
+    background: #0a0a0b;
+    color: #fafafa;
+}
+
+/* ── Onboarding Screen ──────────────────────────────── */
+
+#onboarding {
+    align: center middle;
+}
+
+#onboarding-container {
+    width: 56;
+    height: auto;
+    max-height: 32;
+    border: round #27272a;
+    padding: 1 2;
+    background: #18181b;
+}
+
+#onboarding-title {
+    text-align: center;
+    color: #00f5d4;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+#onboarding-subtitle {
+    text-align: center;
+    color: #71717a;
+    margin-bottom: 1;
+}
+
+#onboarding-status {
+    margin-top: 1;
+    height: auto;
+    color: #a1a1aa;
+}
+
+.onboarding-label {
+    color: #a1a1aa;
+    margin-top: 1;
+}
+
+.onboarding-input {
+    margin-bottom: 1;
+    border: tall #27272a;
+    background: #0a0a0b;
+    color: #fafafa;
+}
+
+.onboarding-input:focus {
+    border: tall #00f5d4;
+}
+
+#connect-btn {
+    width: 100%;
+    margin-top: 1;
+    background: #00f5d4;
+    color: #0a0a0b;
+    text-style: bold;
+    border: none;
+}
+
+#connect-btn:hover {
+    background: #00d4b4;
+}
+
+/* ── Header ─────────────────────────────────────────── */
+
+OvoHeader {
+    dock: top;
+    height: 1;
+    background: #18181b;
+    color: #fafafa;
+}
+
+#header-bar {
+    width: 100%;
+    height: 1;
+    layout: horizontal;
+}
+
+#header-title {
+    width: auto;
+    color: #00f5d4;
+    text-style: bold;
+    padding: 0 1;
+}
+
+#header-model {
+    width: auto;
+    color: #a1a1aa;
+}
+
+#header-spacer {
+    width: 1fr;
+}
+
+#header-connection {
+    width: auto;
+    padding: 0 1;
+    color: #71717a;
+}
+
+/* ── Welcome View ───────────────────────────────────── */
+
+#welcome-view {
+    height: 1fr;
+    width: 100%;
+    align: center middle;
+}
+
+#welcome-container {
+    width: 60;
+    height: auto;
+    align: center middle;
+    padding: 2 4;
+}
+
+#welcome-logo {
+    text-align: center;
+    color: #00f5d4;
+    text-style: bold;
+    width: 100%;
+    margin-bottom: 1;
+}
+
+#welcome-greeting {
+    text-align: center;
+    color: #fafafa;
+    text-style: bold;
+    width: 100%;
+    margin-bottom: 1;
+}
+
+#welcome-model-tag {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 2;
+    color: #71717a;
+}
+
+#welcome-input {
+    width: 100%;
+    border: tall #27272a;
+    background: #18181b;
+    color: #fafafa;
+    padding: 0 1;
+}
+
+#welcome-input:focus {
+    border: tall #00f5d4;
+}
+
+/* ── Chat View (4:1 split) ──────────────────────────── */
+
+#chat-view {
+    height: 1fr;
+    width: 100%;
+    layout: horizontal;
+}
+
+#chat-column {
+    width: 4fr;
+    height: 100%;
+}
+
+/* ── Chat Area ──────────────────────────────────────── */
+
+OvoChat {
+    height: 1fr;
+    padding: 0 1;
+    scrollbar-color: #27272a;
+    scrollbar-color-hover: #00f5d4;
+    scrollbar-color-active: #00f5d4;
+}
+
+/* Message rows */
+.msg-row {
+    width: 100%;
+    height: auto;
+    margin: 1 0 0 0;
+    layout: horizontal;
+}
+
+.msg-spacer {
+    width: 1fr;
+}
+
+/* User bubbles — right aligned */
+.msg-bubble-user {
+    width: auto;
+    max-width: 70%;
+    background: #1a3a3a;
+    color: #fafafa;
+    padding: 1 2;
+    border: round #00f5d4 40%;
+    margin-right: 1;
+}
+
+/* Assistant bubbles — left aligned */
+.msg-bubble-assistant {
+    width: auto;
+    max-width: 75%;
+    background: #18181b;
+    color: #fafafa;
+    padding: 1 2;
+    border: round #27272a;
+    margin-left: 0;
+}
+
+/* Avatar */
+.msg-avatar {
+    width: 3;
+    height: 1;
+    color: #00f5d4;
+    text-style: bold;
+    margin-top: 1;
+}
+
+/* Status messages */
+.msg-status {
+    color: #71717a;
+    text-align: center;
+    width: 100%;
+    margin: 0 0;
+}
+
+/* ── Info Panel (1 part of 4:1) ─────────────────────── */
+
+OvoInfoPanel {
+    width: 1fr;
+    height: 100%;
+    background: #111113;
+    border-left: solid #27272a;
+    padding: 1;
+}
+
+#info-panel-inner {
+    width: 100%;
+    height: 100%;
+}
+
+.info-section-title {
+    color: #00f5d4;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+.info-stat {
+    color: #a1a1aa;
+    margin-bottom: 1;
+    padding-left: 1;
+}
+
+.info-divider {
+    color: #27272a;
+    margin: 1 0;
+}
+
+#info-tasks-list {
+    height: 1fr;
+    scrollbar-color: #27272a;
+}
+
+.info-task {
+    padding-left: 1;
+    margin-bottom: 0;
+}
+
+.info-task-done {
+    color: #71717a;
+}
+
+.info-task-pending {
+    color: #a1a1aa;
+}
+
+/* ── Composer ───────────────────────────────────────── */
+
+OvoComposer {
+    dock: bottom;
+    height: auto;
+    min-height: 3;
+    max-height: 10;
+    padding: 0 1;
+    background: #18181b;
+    border-top: solid #27272a;
+}
+
+#composer-container {
+    height: auto;
+    width: 100%;
+}
+
+#composer-input {
+    height: auto;
+    min-height: 1;
+    max-height: 8;
+    width: 1fr;
+    border: tall #27272a;
+    background: #0a0a0b;
+    color: #fafafa;
+    padding: 0 1;
+}
+
+#composer-input:focus {
+    border: tall #00f5d4;
+}
+
+#composer-send {
+    width: 5;
+    min-width: 5;
+    height: 3;
+    margin-left: 1;
+    background: #00f5d4;
+    color: #0a0a0b;
+    border: none;
+}
+
+#composer-send:hover {
+    background: #00d4b4;
+}
+
+/* ── Status Bar ─────────────────────────────────────── */
+
+OvoStatusBar {
+    dock: bottom;
+    height: 1;
+    background: #18181b;
+    border-top: solid #27272a;
+    color: #71717a;
+}
+
+#statusbar-content {
+    width: 100%;
+    height: 1;
+    layout: horizontal;
+    padding: 0 1;
+}
+
+.status-item {
+    width: auto;
+    padding: 0 1;
+    color: #71717a;
+}
+
+.status-sep {
+    color: #27272a;
+}
+
+.status-session {
+    color: #a1a1aa;
+}
+
+.status-model {
+    color: #fafafa;
+}
+
+.status-connected {
+    color: #22c55e;
+}
+
+.status-disconnected {
+    color: #ef4444;
+}
