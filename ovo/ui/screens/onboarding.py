@@ -31,7 +31,11 @@ class OnboardingScreen(Screen):
                 yield Static("⬡ OVO", id="onboarding-title")
                 yield Static("Powered by LLMesh", id="onboarding-subtitle")
                 yield Static("")
-                yield Static("Connect your LLMesh account", classes="onboarding-label")
+                yield Static(
+                    "Add your LLMesh API key to get started.\n"
+                    "Get yours from the LLMesh web dashboard.",
+                    classes="onboarding-label",
+                )
                 yield Static("")
                 yield Static("LLMesh Endpoint:", classes="onboarding-label")
                 yield Input(
@@ -43,23 +47,18 @@ class OnboardingScreen(Screen):
                 yield Static("API Key:", classes="onboarding-label")
                 yield Input(
                     value=self._default_key,
-                    placeholder="Enter your LLMesh API key",
+                    placeholder="Paste your LLMesh API key here",
                     id="onboarding-key",
                     password=True,
                     classes="onboarding-input",
                 )
-                yield Static(
-                    "Tip: Set GROQ_API_KEY, NVIDIA_NIM_API_KEY, or\n"
-                    "OPENROUTER_API_KEY in .env for upstream providers.",
-                    classes="onboarding-label",
-                )
                 yield Static("")
-                yield Button("Connect", id="connect-btn", variant="primary")
+                yield Button("Add API Key & Connect", id="connect-btn", variant="primary")
                 yield Static("", id="onboarding-status")
 
     def on_mount(self):
-        # Focus the URL input if no key, otherwise the key input
-        if self._default_key:
+        # Focus the key input if we already have a URL
+        if self._default_url and not self._default_key:
             self.query_one("#onboarding-key", Input).focus()
         else:
             self.query_one("#onboarding-url", Input).focus()

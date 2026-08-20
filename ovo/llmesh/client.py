@@ -116,6 +116,7 @@ class LLMeshClient:
             "model": model,
             "messages": messages,
             "stream": True,
+            "stream_options": {"include_usage": True},
             "temperature": temperature,
         }
         if max_tokens:
